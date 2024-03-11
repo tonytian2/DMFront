@@ -1,0 +1,90 @@
+.home {
+  background: url('./pictures/cloud.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-container {
+  backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1, h2 {
+  color: #333;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  gap: 20px;
+  align-items: center; 
+  flex-direction: column;
+}
+
+.form-section {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+}
+
+.form-control {
+  padding: 10px 15px;
+  border: 1px solid #ccc;  
+  border-radius: 20px;
+  margin-bottom: 10px;
+  width: calc(100% - 30px);}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(220, 225, 230, 0.25);
+}
+
+.button-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+  
+}
+
+.form-content {
+  display: flex;
+  justify-content: space-between; /* This will space out the Local and Destination forms */
+  width: 100%;
+  gap: 30px;
+}
+
+.button {
+  padding: 10px 30px;
+  background-color: #3d90e2; /* Dark shiny blue */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 10px 0 rgba(0, 123, 255, 0.75); /* Shiny effect */
+}
+
+.button:hover {
+  background-color: #4167b4; /* Slightly darker on hover */
+}
+
+/* Ensure responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .form-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-section {
+    width: 100%;
+  }
+}
