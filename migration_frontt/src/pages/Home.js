@@ -3,9 +3,11 @@ import './CSS/Home.css'; // Make sure the path to your CSS file is correct
 import ErrorModal from './Modal/ErrorModal';
 import ProgressModal from './Modal/LoadingModal'; 
 import ValidationModal from './Modal/ValidationModal'
+import { useNavigate } from "react-router-dom";
 
 
 const Home = () => {
+  const navigate = useNavigate();
   const [sqlHost, setSqlHost] = useState('');
   const [sqlUsername, setSqlUsername] = useState('');
   const [sqlPassword, setSqlPassword] = useState('');
@@ -20,7 +22,9 @@ const Home = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Your form submission logic here
+    // check connection logic
+    navigate("/migration");
+
   };
 
   const handleCloseModalA = () => {
@@ -60,9 +64,9 @@ const Home = () => {
         />
       )}
 
-      <button onClick={() => setShowModalA(true)}>Open ModalA</button>
-      <button onClick={() => setShowModalB(true)}>Open ModalB</button>
-      <button onClick={() => setShowModalC(true)}>Open ModalC</button>
+      <button onClick={() => setShowModalA(true)}>Error Modal</button>
+      {/* <button onClick={() => setShowModalB(true)}>Open ModalB</button>
+      <button onClick={() => setShowModalC(true)}>Open ModalC</button> */}
 
 
       

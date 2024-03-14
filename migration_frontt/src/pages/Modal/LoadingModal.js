@@ -1,14 +1,20 @@
 import React from 'react';
 import '../CSS/LoadingModal.css';
-import cloudicon from '../CSS/pictures/data.png'; // Import the icon
+import cloudicon from '../CSS/pictures/data.png'; 
+import validateicon from '../CSS/pictures/approval.png'; 
 
-const LoadingModal = ({ progress, closeModal }) => {
+
+const LoadingModal = ({ progress, closeModal , msg}) => {
   return (
     <div className="modal">
       <div className="modal-content">
         <div className="modal-header">
+        {msg === "Validating" ? (
+          <img src={validateicon} alt="Validation Icon" className="modal-icon" />
+          ) : (
           <img src={cloudicon} alt="Cloud Icon" className="modal-icon" />
-          <h2>Migration Progress</h2>
+        )}
+          <h2>{msg}</h2>
           <button className="close-buttonn" onClick={closeModal}>&times;</button> {/* Close button */}
         </div>
         <div className="modal-body">

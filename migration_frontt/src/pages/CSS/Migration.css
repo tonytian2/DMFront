@@ -1,0 +1,43 @@
+/* Migration.css */
+.form-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .card {
+    max-width: 100%; /* Adjusts card width to not exceed the viewport width */
+    margin: 1px; /* Adds some margin to the card */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
+  }
+  
+  .card-body {
+    max-height: 500px; /* Adjusts max height for your card body */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding: 20px 10px; /* Adds padding inside the card body */
+  }
+  
+  /* Styles for your table */
+  .table {
+    width: 100%; /* Ensures the table fills its container */
+    margin-bottom: 0; /* Removes bottom margin to handle spacing within card-body */
+  }
+  
+  /* Styles for your buttons */
+  .button-container {
+    display: flex;
+    justify-content: center; /* Center-aligns the button */
+    padding: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    background-color: #3d90e2; /* Example button color */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  /* Add any other styles that you might need */
+  

@@ -1,19 +1,67 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 import { db_ecommerce_data } from "./testdata.js";
+import ProgressModal from './Modal/LoadingModal'; 
+import ValidationModal from './Modal/ValidationModal'
+
+import './CSS/Migration.css'; 
+
 
 const Migration = () => {
   const navigate = useNavigate();
+  const [showProgress, setShowProgress] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Migrating");
+
+
 
   function handleMigrate() {
     // Start migration by calling backend
 
     // Redirect to Result.js after migration
-    navigate("/result");
+    setShowProgress(true);
+    //set 5 second timeout
+    setTimeout(() => {
+      setShowProgress(false);
+      setShowValidation(true);
+    }, 5000);
+    
   }
+  const handleCloseModalB = () => {
+    setShowProgress(false);
+  };
+  const handleCloseModalC = () => {
+    
+      navigate("/result");
+    
 
+    
+  };
+  const handleValidation = (inputPercentage) => {
+    // Validation logic goes here
+    console.log(`Validation started with percentage: ${inputPercentage}`);
+    // Potentially close modal after validation
+    setShowValidation(false)
+    setLoadingMessage("Validating")
+    setShowProgress(true)
+    
+    setTimeout(() => {
+      navigate("/result");
+    }, 5000);
+
+  };
   return (
     <div className="home">
+      {showProgress && (
+        <ProgressModal progress={50} closeModal={handleCloseModalB} msg={loadingMessage} />
+        )}
+      {showValidation && (
+        <ValidationModal
+          closeModal={handleCloseModalC}
+          onValidate={handleValidation}
+        />
+      )}
       <div className="form-container">
         <div className="card" style={{ width: "500px" }}>
           <div className="card-body w-75" style={{ margin: "auto" }}>

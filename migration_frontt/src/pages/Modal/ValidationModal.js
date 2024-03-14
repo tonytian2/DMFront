@@ -3,17 +3,20 @@ import '../CSS/ValidationModal.css';
 import checkicon from '../CSS/pictures/check.png'; // Make sure the path is correct
 
 const ValidationModal = ({ closeModal, onValidate }) => {
-  // Manage the input state if it's not coming from the parent component
   const [inputValidationPercentage, setInputValidationPercentage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Update the state when the input changes
   const handleInputChange = (event) => {
     setInputValidationPercentage(event.target.value);
+    setErrorMessage('');
   };
 
-  // When the user clicks 'YES', pass the input value to the onValidate function
   const handleValidateClick = () => {
-    onValidate(inputValidationPercentage);
+    if (inputValidationPercentage !== '' && Number(inputValidationPercentage) >= 0 && Number(inputValidationPercentage) <= 100) {
+      onValidate(inputValidationPercentage);
+    } else {
+      setErrorMessage('Invalid input. Please enter a value between 0 and 100.');
+    }
   };
 
   return (
@@ -26,15 +29,16 @@ const ValidationModal = ({ closeModal, onValidate }) => {
         <div className="modal-body">
           <p>Do you want to validate the data?</p>
           <input
-            type="number" // Use "number" if you want to restrict input to numbers
+            type="number"
             placeholder="Validation %"
             value={inputValidationPercentage}
             onChange={handleInputChange}
             className="validation-input"
           />
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="modal-footer">
             <button className="yes-button" onClick={handleValidateClick}>YES</button>
-            <button className="close-button" onClick={closeModal}>CLOSE</button>
+            <button className="close-button" onClick={closeModal}>NO</button>
           </div>
         </div>
       </div>

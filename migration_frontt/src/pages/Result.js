@@ -1,16 +1,69 @@
 import React from "react";
 import { migration_result } from "./testdata.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 import {
   faCircleCheck,
   faCircleXmark,
 } from "@fortawesome/free-regular-svg-icons";
+import ProgressModal from './Modal/LoadingModal'; 
+import ValidationModal from './Modal/ValidationModal'
+
+
 
 const Result = () => {
+  const navigate = useNavigate();
+  const [showProgress, setShowProgress] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Migrating");
+
   function handleToggle() {}
+
+  const handleRemigrate = () => {
+    setLoadingMessage("Migrating")
+    setShowProgress(true);
+    //set 5 second timeout
+    setTimeout(() => {
+      setShowProgress(false);
+      setShowValidation(true);
+    }, 5000);
+  }
+  const handleRevalidate = () => {
+    setShowValidation(true);
+
+  }
+
+  const handleCloseModalB = () => {
+    setShowProgress(false);
+  };
+  const handleCloseModalC = () => {
+      setShowValidation(false);
+  };
+  const handleValidation = (inputPercentage) => {
+    console.log(`Validation started with percentage: ${inputPercentage}`);
+    setShowValidation(false)
+    setLoadingMessage("Validating")
+    setShowProgress(true)
+    
+    setTimeout(() => {
+      setShowProgress(false)
+    }, 5000);
+
+  };
+
 
   return (
     <div className="home">
+      {showProgress && (
+        <ProgressModal progress={50} closeModal={handleCloseModalB} msg={loadingMessage} />
+        )}
+      {showValidation && (
+        <ValidationModal
+          closeModal={handleCloseModalC}
+          onValidate={handleValidation}
+        />
+      )}
       <div className="form-container">
         <div className="card" style={{ width: "900px" }}>
           <div className="card-body w-75" style={{ margin: "auto" }}>
@@ -119,10 +172,10 @@ const Result = () => {
           </div>
         </div>
         <div className="button-container d-flex justify-content-end gap-3">
-          <button type="submit" className="button">
+          <button type="submit" className="button" onClick={handleRevalidate}>
             Revalidate
           </button>
-          <button type="submit" className="button">
+          <button type="submit" className="button" onClick={handleRemigrate}>
             Remigrate
           </button>
         </div>
