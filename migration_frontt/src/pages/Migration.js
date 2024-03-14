@@ -18,7 +18,7 @@ const Migration = () => {
 
     // Redirect to Result.js after migration
     setShowProgress(true);
-    //set 5 second timeout
+    // Set 5 second timeout
     setTimeout(() => {
       setShowProgress(false);
       setShowValidation(true);
@@ -62,8 +62,8 @@ const Migration = () => {
         />
       )}
       <div className="form-container">
-        <div className="card" style={{ width: "500px" }}>
-          <div className="card-body w-75" style={{ margin: "auto" }}>
+        <div className="card" style={{ width: "600px" }}>
+          <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
             <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
               Local Database
             </h2>

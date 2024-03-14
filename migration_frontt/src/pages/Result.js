@@ -68,7 +68,7 @@ const Result = () => {
       )}
       <div className="form-container">
         <div className="card" style={{ width: "900px" }}>
-          <div className="card-body w-75" style={{ margin: "auto" }}>
+          <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
             <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
               Migration Result
             </h2>
@@ -104,7 +104,7 @@ const Result = () => {
                       style={{
                         whiteSpace: "nowrap",
                         paddingLeft: "20px",
-                        verticalAlign: "middle",
+                        alignItems: "center",
                       }}
                     >
                       {data.completeness ? (
@@ -123,7 +123,7 @@ const Result = () => {
                       style={{
                         whiteSpace: "nowrap",
                         paddingLeft: "20px",
-                        verticalAlign: "middle",
+                        alignItems: "center",
                       }}
                     >
                       {data.accuracy ? (
@@ -142,30 +142,33 @@ const Result = () => {
                       style={{
                         whiteSpace: "nowrap",
                         paddingLeft: "20px",
+                        alignItems: "center",
                       }}
                     >
-                      <div class="form-check">
-                        <input
-                          class="form-check-input border-3"
-                          style={{ width: "20px", height: "20px" }}
-                          type="checkbox"
-                          value=""
-                          id="revalidate-checkbox"
-                          onChange={handleToggle}
-                        />
-                      </div>
+                      <input
+                        class="form-check-input border-3"
+                        style={{ width: "20px", height: "20px" }}
+                        type="checkbox"
+                        value=""
+                        id="revalidate-checkbox"
+                        onChange={handleToggle}
+                      />
                     </td>
-                    <td style={{ whiteSpace: "nowrap", paddingLeft: "20px" }}>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input border-3"
-                          style={{ width: "20px", height: "20px" }}
-                          type="checkbox"
-                          value=""
-                          id="remigrate-checkbox"
-                          onChange={handleToggle}
-                        />
-                      </div>
+                    <td
+                      style={{
+                        whiteSpace: "nowrap",
+                        paddingLeft: "20px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <input
+                        class="form-check-input border-3"
+                        style={{ width: "20px", height: "20px" }}
+                        type="checkbox"
+                        value=""
+                        id="remigrate-checkbox"
+                        onChange={handleToggle}
+                      />
                     </td>
                   </tr>
                 ))}
