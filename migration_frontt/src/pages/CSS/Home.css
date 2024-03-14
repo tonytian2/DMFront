@@ -5,8 +5,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+
 }
 
+
+.company-title {
+  font-size: 80px;
+  font-weight: bold;
+  margin-bottom: 100px;
+}
 .form-container {
   backdrop-filter: blur(5px);
   background-color: rgba(255, 255, 255, 0.8);
@@ -38,14 +46,14 @@ h1, h2 {
 
 .form-control {
   padding: 10px 15px;
-  border: 1px solid #ccc;  
+  border: 1px solid #cccccc;  
   border-radius: 20px;
   margin-bottom: 10px;
   width: calc(100% - 30px);}
 
 .form-control:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(220, 225, 230, 0.25);
+  box-shadow: 0 0 0 2px rgba(16, 85, 153, 0.25);
 }
 
 .button-container {

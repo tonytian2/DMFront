@@ -1,0 +1,69 @@
+/* ... Other styles remain the same ... */
+
+.modal-header {
+  background-color: #8BC34A; /* Light green header */
+  color: white;
+  padding: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  display: flex; /* Use flexbox for positioning */
+  align-items: center; /* Align items vertically */
+  justify-content: flex-start; /* Start content from the left side */
+}
+
+.modal-icon {
+  width: 30px; /* Adjust the size if needed */
+  height: 30px;
+  margin-left: 20px; /* Space from the left side */
+}
+
+.modal-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.validation-input {
+  margin: 20px 0; /* Space above and below the input */
+  text-align: left; /* Align the text inside the input to the left */
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between; /* Adjust content spacing */
+  padding-top: 20px;
+}
+
+/* Adjust the buttons to have equal size and equal spacing from the sides */
+.yes-button, .close-button {
+  background-color: #4CAF50; /* Same green color for 'YES' button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-grow: 1; /* Make buttons grow to fill the space */
+  margin: 0 10px; /* Add some space between the buttons */
+}
+
+/* Specifically style the 'CLOSE' button */
+.close-button {
+  background-color: #f44336; /* Red color for 'CLOSE' button */
+}
+
+/* Assuming you want to remove the top-right cross button style, comment it out or remove it */
+/*
+.close-button {
+  display: none;
+}
+*/
+
+/* Add a media query if you need to adjust layout on smaller screens */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%; /* Adjust the width for smaller screens */
+  }
+  
+  .modal-icon, .yes-button, .close-button {
+    margin: 0; /* Remove margin on smaller screens if necessary */
+  }
+}

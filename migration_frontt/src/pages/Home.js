@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import './CSS/Home.css'; // Make sure the path to your CSS file is correct
+import ErrorModal from './Modal/ErrorModal';
+import ProgressModal from './Modal/LoadingModal'; 
+import ValidationModal from './Modal/ValidationModal'
+
 
 const Home = () => {
   const [sqlHost, setSqlHost] = useState('');
@@ -8,19 +12,66 @@ const Home = () => {
   const [CloudURL, setCloudURL] = useState('');
   const [CloudUsername, setCloudUsername] = useState('');
   const [cloudPassword, setCloudPassword] = useState('');
+  const [showModalA, setShowModalA] = useState(false);
+  const [showModalB, setShowModalB] = useState(false);
+  const [showModalC, setShowModalC] = useState(false);
+  const [progress, setProgress] = useState(50); // Initialize progress state
+  const [errorMessage, setErrorMessage] = useState('This is an error message');
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Your form submission logic here
   };
 
+  const handleCloseModalA = () => {
+    setShowModalA(false);
+  };
+  const handleCloseModalB = () => {
+    setShowModalB(false);
+  };
+  const handleCloseModalC = () => {
+    setShowModalC(false);
+  };
+  const handleValidation = (inputPercentage) => {
+    // Validation logic goes here
+    console.log(`Validation started with percentage: ${inputPercentage}`);
+    // Potentially close modal after validation
+    handleCloseModalC();
+  };
+
+
+
+
   return (
+    
     <div className="home">
+      {showModalA && (
+        <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
+        )}
+
+      {showModalB && (
+        <ProgressModal progress={progress} closeModal={handleCloseModalB} />
+        )}
+
+      {showModalC && (
+        <ValidationModal
+          closeModal={handleCloseModalC}
+          onValidate={handleValidation}
+        />
+      )}
+
+      <button onClick={() => setShowModalA(true)}>Open ModalA</button>
+      <button onClick={() => setShowModalB(true)}>Open ModalB</button>
+      <button onClick={() => setShowModalC(true)}>Open ModalC</button>
+
+
+      
+      <h1 className="company-title">CloudBridge</h1> 
       <div className="form-container">
         <form onSubmit={handleSubmit} className="form">
           <div className="form-content">
             <div className="form-section box">
-              <h2>Local</h2>
+              <h2>Local Database</h2>
               <input
                 id="sqlHost"
                 type="text"
@@ -47,7 +98,7 @@ const Home = () => {
               />
             </div>
             <div className="form-section box">
-              <h2>Destination</h2>
+              <h2>Destination Cloud</h2>
               <input
                 id="CloudURL"
                 type="text"
