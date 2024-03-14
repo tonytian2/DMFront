@@ -1,30 +1,28 @@
-import { useState } from 'react';
-import './CSS/Home.css'; // Make sure the path to your CSS file is correct
-import ErrorModal from './Modal/ErrorModal';
-import ProgressModal from './Modal/LoadingModal'; 
-import ValidationModal from './Modal/ValidationModal'
+import { useState } from "react";
+import "./CSS/Home.css"; // Make sure the path to your CSS file is correct
+import ErrorModal from "./Modal/ErrorModal";
+import ProgressModal from "./Modal/LoadingModal";
+import ValidationModal from "./Modal/ValidationModal";
 import { useNavigate } from "react-router-dom";
-
 
 const Home = () => {
   const navigate = useNavigate();
-  const [sqlHost, setSqlHost] = useState('');
-  const [sqlUsername, setSqlUsername] = useState('');
-  const [sqlPassword, setSqlPassword] = useState('');
-  const [CloudURL, setCloudURL] = useState('');
-  const [CloudUsername, setCloudUsername] = useState('');
-  const [cloudPassword, setCloudPassword] = useState('');
+  const [sqlHost, setSqlHost] = useState("");
+  const [sqlUsername, setSqlUsername] = useState("");
+  const [sqlPassword, setSqlPassword] = useState("");
+  const [CloudURL, setCloudURL] = useState("");
+  const [CloudUsername, setCloudUsername] = useState("");
+  const [cloudPassword, setCloudPassword] = useState("");
   const [showModalA, setShowModalA] = useState(false);
   const [showModalB, setShowModalB] = useState(false);
   const [showModalC, setShowModalC] = useState(false);
   const [progress, setProgress] = useState(50); // Initialize progress state
-  const [errorMessage, setErrorMessage] = useState('This is an error message');
+  const [errorMessage, setErrorMessage] = useState("This is an error message");
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // check connection logic
     navigate("/migration");
-
   };
 
   const handleCloseModalA = () => {
@@ -43,19 +41,15 @@ const Home = () => {
     handleCloseModalC();
   };
 
-
-
-
   return (
-    
     <div className="home">
       {showModalA && (
         <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
-        )}
+      )}
 
       {showModalB && (
         <ProgressModal progress={progress} closeModal={handleCloseModalB} />
-        )}
+      )}
 
       {showModalC && (
         <ValidationModal
@@ -68,9 +62,7 @@ const Home = () => {
       {/* <button onClick={() => setShowModalB(true)}>Open ModalB</button>
       <button onClick={() => setShowModalC(true)}>Open ModalC</button> */}
 
-
-      
-      <h1 className="company-title">CloudBridge</h1> 
+      <h1 className="company-title">CloudBridge</h1>
       <div className="form-container">
         <form onSubmit={handleSubmit} className="form">
           <div className="form-content">
@@ -130,7 +122,9 @@ const Home = () => {
             </div>
           </div>
           <div className="button-container">
-            <button type="submit" className="button">Connect</button>
+            <button type="submit" className="button">
+              Connect
+            </button>
           </div>
         </form>
       </div>

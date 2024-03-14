@@ -1,7 +1,7 @@
 /* ... Other styles remain the same ... */
 
 .modal-header {
-  background-color: #8BC34A; /* Light green header */
+  background-color: #8bc34a; /* Light green header */
   color: white;
   padding: 10px;
   border-top-left-radius: 15px;
@@ -34,8 +34,9 @@
 }
 
 /* Adjust the buttons to have equal size and equal spacing from the sides */
-.yes-button, .close-button {
-  background-color: #4CAF50; /* Same green color for 'YES' button */
+.yes-button,
+.close-button {
+  background-color: #4caf50; /* Same green color for 'YES' button */
   color: white;
   padding: 10px 20px;
   border: none;
@@ -62,8 +63,10 @@
   .modal-content {
     width: 90%; /* Adjust the width for smaller screens */
   }
-  
-  .modal-icon, .yes-button, .close-button {
+
+  .modal-icon,
+  .yes-button,
+  .close-button {
     margin: 0; /* Remove margin on smaller screens if necessary */
   }
 }

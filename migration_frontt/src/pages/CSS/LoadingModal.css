@@ -1,79 +1,75 @@
 .modal {
-    display: block;
-    position: fixed;
-    z-index: 100; /* Ensure the modal is on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Dimmed background */
-  }
-  
-  .modal-content {
-    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
-    backdrop-filter: blur(15px); /* Blur effect */
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 15px;
-    width: 40%; /* Adjust width as needed */
-    text-align: center;
-  }
-  
-  .modal-header {
-    background-color: #8BC34A; /* Light green header */
-    color: white;
-    padding: 10px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    font-size: 1.5rem;
-  }
-  
-  .modal-icon {
-    font-size: 2rem; /* Adjust the size as needed */
-  }
-  
-  .modal-body {
-    padding: 20px;
-  }
-  
-  .progress-bar-background {
-    background-color: #e0e0e0; /* Light grey background for progress bar */
-    border-radius: 8px;
-    width: 100%; /* Full width of the modal body */
-    height: 20px; /* Adjust height as needed */
-    overflow: hidden; /* Ensure the foreground doesn't spill over the border-radius */
-  }
-  
-  .progress-bar-foreground {
-    background-color: #4CAF50; /* Green color for the progress made */
-    height: 100%; /* Full height of the background bar */
-    transition: width 0.4s ease; /* Smooth transition for the width change */
-  }
-  
-  .progress-text {
-    margin-top: 10px;
-  }
-  
-  .modal-icon {
-    width: 30px; /* Or any other size */
-    height: 30px; /* Maintain aspect ratio */
-    vertical-align: middle; /* Align it with text if needed */
-    margin-right: 10px; /* Space between icon and title */
-  }
-  
+  display: block;
+  position: fixed;
+  z-index: 100; /* Ensure the modal is on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Dimmed background */
+}
+
+.modal-content {
+  background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+  backdrop-filter: blur(15px); /* Blur effect */
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 15px;
+  width: 40%; /* Adjust width as needed */
+  text-align: center;
+}
+
+.modal-header {
+  background-color: #8bc34a; /* Light green header */
+  color: white;
+  padding: 10px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  font-size: 1.5rem;
+}
+
+.modal-icon {
+  font-size: 2rem; /* Adjust the size as needed */
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.progress-bar-background {
+  background-color: #e0e0e0; /* Light grey background for progress bar */
+  border-radius: 8px;
+  width: 100%; /* Full width of the modal body */
+  height: 20px; /* Adjust height as needed */
+  overflow: hidden; /* Ensure the foreground doesn't spill over the border-radius */
+}
+
+.progress-bar-foreground {
+  background-color: #4caf50; /* Green color for the progress made */
+  height: 100%; /* Full height of the background bar */
+  transition: width 0.4s ease; /* Smooth transition for the width change */
+}
+
+.progress-text {
+  margin-top: 10px;
+}
+
+.modal-icon {
+  width: 30px; /* Or any other size */
+  height: 30px; /* Maintain aspect ratio */
+  vertical-align: middle; /* Align it with text if needed */
+  margin-right: 10px; /* Space between icon and title */
+}
 
 .close-buttonn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: none;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 1.25rem; /* Adjust the size as needed */
-    line-height: 1; /* Aligns the text symbol properly */
-    color: #000; /* Adjust color as needed */
-  }
-  
-
-  
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.25rem; /* Adjust the size as needed */
+  line-height: 1; /* Aligns the text symbol properly */
+  color: #000; /* Adjust color as needed */
+}

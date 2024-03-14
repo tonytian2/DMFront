@@ -2,15 +2,13 @@ import React from "react";
 import { migration_result } from "./testdata.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import { useState } from 'react';
+import { useState } from "react";
 import {
   faCircleCheck,
   faCircleXmark,
 } from "@fortawesome/free-regular-svg-icons";
-import ProgressModal from './Modal/LoadingModal'; 
-import ValidationModal from './Modal/ValidationModal'
-
-
+import ProgressModal from "./Modal/LoadingModal";
+import ValidationModal from "./Modal/ValidationModal";
 
 const Result = () => {
   const navigate = useNavigate();
@@ -21,43 +19,47 @@ const Result = () => {
   function handleToggle() {}
 
   const handleRemigrate = () => {
-    setLoadingMessage("Migrating")
+    setLoadingMessage("Migrating");
     setShowProgress(true);
     //set 5 second timeout
     setTimeout(() => {
       setShowProgress(false);
       setShowValidation(true);
     }, 5000);
-  }
+  };
+
   const handleRevalidate = () => {
     setShowValidation(true);
-
-  }
+  };
 
   const handleCloseModalB = () => {
     setShowProgress(false);
   };
+
   const handleCloseModalC = () => {
-      setShowValidation(false);
+    setShowValidation(false);
   };
+
   const handleValidation = (inputPercentage) => {
     console.log(`Validation started with percentage: ${inputPercentage}`);
-    setShowValidation(false)
-    setLoadingMessage("Validating")
-    setShowProgress(true)
-    
+    setShowValidation(false);
+    setLoadingMessage("Validating");
+    setShowProgress(true);
+
     setTimeout(() => {
-      setShowProgress(false)
+      setShowProgress(false);
     }, 5000);
-
   };
-
 
   return (
     <div className="home">
       {showProgress && (
-        <ProgressModal progress={50} closeModal={handleCloseModalB} msg={loadingMessage} />
-        )}
+        <ProgressModal
+          progress={50}
+          closeModal={handleCloseModalB}
+          msg={loadingMessage}
+        />
+      )}
       {showValidation && (
         <ValidationModal
           closeModal={handleCloseModalC}
