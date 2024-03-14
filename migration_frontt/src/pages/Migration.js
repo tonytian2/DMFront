@@ -1,66 +1,34 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { db_ecommerce_data } from "./testdata.js";
 
 const Migration = () => {
-  const db_ecommerce_data = [
-    {
-      tableName: "Suppliers",
-      rowTotal: "1000",
-    },
-    {
-      tableName: "Products",
-      rowTotal: "2000",
-    },
-    {
-      tableName: "Categories",
-      rowTotal: "2000",
-    },
-    {
-      tableName: "Orders",
-      rowTotal: "3000",
-    },
-    {
-      tableName: "Orders Items",
-      rowTotal: "3000",
-    },
-    {
-      tableName: "Customers",
-      rowTotal: "2000",
-    },
-    {
-      tableName: "Shippers",
-      rowTotal: "2000",
-    },
-    {
-      tableName: "Payments",
-      rowTotal: "2000",
-    },
-    {
-      tableName: "Reviews",
-      rowTotal: "2000",
-    },
-    {
-      tableName: "Shipping",
-      rowTotal: "2000",
-    },
-  ];
+  const navigate = useNavigate();
+
+  function handleMigrate() {
+    // Start migration by calling backend
+
+    // Redirect to Result.js after migration
+    navigate("/result");
+  }
 
   return (
     <div className="home">
       <div className="form-container">
-        <div className="card" style={{ width: "40rem" }}>
-          <div className="card-body" style={{ margin: "auto" }}>
-            <h5 className="card-title" style={{ whiteSpace: "nowrap" }}>
+        <div className="card" style={{ width: "500px" }}>
+          <div className="card-body w-75" style={{ margin: "auto" }}>
+            <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
               Local Database
-            </h5>
+            </h2>
             <table class="table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                    table name
+                    Table Name
                   </th>
                   <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                    no. of rows
+                    No. of rows
                   </th>
                 </tr>
               </thead>
@@ -77,6 +45,11 @@ const Migration = () => {
               </tbody>
             </table>
           </div>
+        </div>
+        <div className="button-container">
+          <button type="submit" className="button" onClick={handleMigrate}>
+            Migrate
+          </button>
         </div>
       </div>
     </div>
