@@ -10,19 +10,32 @@ const Home = () => {
   const [sqlHost, setSqlHost] = useState("");
   const [sqlUsername, setSqlUsername] = useState("");
   const [sqlPassword, setSqlPassword] = useState("");
-  const [CloudURL, setCloudURL] = useState("");
-  const [CloudUsername, setCloudUsername] = useState("");
+  const [cloudURL, setCloudURL] = useState("");
+  const [cloudUsername, setCloudUsername] = useState("");
   const [cloudPassword, setCloudPassword] = useState("");
   const [showModalA, setShowModalA] = useState(false);
   const [showModalB, setShowModalB] = useState(false);
   const [showModalC, setShowModalC] = useState(false);
   const [progress, setProgress] = useState(50); // Initialize progress state
   const [errorMessage, setErrorMessage] = useState("This is an error message");
+  const [connectErrorMessage, setConnectErrorMessage] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // check connection logic
-    navigate("/migration");
+    console.log(!sqlUsername);
+    if (
+      !sqlHost ||
+      !sqlUsername ||
+      !sqlPassword ||
+      !cloudURL ||
+      !cloudUsername ||
+      !cloudPassword
+    ) {
+      setConnectErrorMessage("Please fill in all required fields.");
+    } else {
+      navigate("/migration");
+    }
   };
 
   const handleCloseModalA = () => {
@@ -96,18 +109,18 @@ const Home = () => {
             <div className="form-section box">
               <h2>Destination Cloud</h2>
               <input
-                id="CloudURL"
+                id="cloudURL"
                 type="text"
                 placeholder="URL"
-                value={CloudURL}
+                value={cloudURL}
                 onChange={(e) => setCloudURL(e.target.value)}
                 className="form-control"
               />
               <input
-                id="CloudUsername"
+                id="cloudUsername"
                 type="text"
                 placeholder="username"
-                value={CloudUsername}
+                value={cloudUsername}
                 onChange={(e) => setCloudUsername(e.target.value)}
                 className="form-control"
               />
@@ -121,6 +134,11 @@ const Home = () => {
               />
             </div>
           </div>
+          {connectErrorMessage && (
+            <p className="error-message" style={{ color: "red" }}>
+              {connectErrorMessage}
+            </p>
+          )}
           <div className="button-container">
             <button type="submit" className="button">
               Connect
