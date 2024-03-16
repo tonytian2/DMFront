@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -11,12 +11,10 @@ import Home from "./pages/Home";
 import Migration from "./pages/Migration";
 import Result from "./pages/Result";
 import NoPage from "./pages/NoPage";
-// import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const PrivateRoute = ({ children }) => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
     return isAuthenticated ? <>{children}</> : <Navigate to="/" />;
   };
 
@@ -24,10 +22,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/">
-          <Route
-            index
-            element={<Home setIsAuthenticated={setIsAuthenticated} />}
-          />
+          <Route index element={<Home />} />
           <Route
             path="/migration"
             element={

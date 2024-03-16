@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./CSS/Home.css"; // Make sure the path to your CSS file is correct
 import ErrorModal from "./Modal/ErrorModal";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
 import { useNavigate } from "react-router-dom";
 
-const Home = ({ setIsAuthenticated }) => {
+const Home = () => {
   const navigate = useNavigate();
   const [sqlHost, setSqlHost] = useState("");
   const [sqlUsername, setSqlUsername] = useState("");
@@ -40,7 +40,7 @@ const Home = ({ setIsAuthenticated }) => {
 
       if (response.ok) {
         // Login successful
-        setIsAuthenticated(true);
+        localStorage.isAuthenticated = true;
         navigate("/migration");
       } else {
         // Login failed
@@ -63,6 +63,11 @@ const Home = ({ setIsAuthenticated }) => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    // Set localStorage.isAuthenticated to false when navigating back to the home page
+    localStorage.setItem("isAuthenticated", "false");
+  }, []);
 
   const handleConnect = (event) => {
     event.preventDefault();
