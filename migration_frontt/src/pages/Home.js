@@ -5,7 +5,7 @@ import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Home = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const [sqlHost, setSqlHost] = useState("");
   const [sqlUsername, setSqlUsername] = useState("");
@@ -20,22 +20,53 @@ const Home = () => {
   const [errorMessage, setErrorMessage] = useState("This is an error message");
   const [connectErrorMessage, setConnectErrorMessage] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // check connection logic
-    console.log(!sqlUsername);
-    if (
-      !sqlHost ||
-      !sqlUsername ||
-      !sqlPassword ||
-      !cloudURL ||
-      !cloudUsername ||
-      !cloudPassword
-    ) {
-      setConnectErrorMessage("Please fill in all required fields.");
-    } else {
-      navigate("/migration");
+  const login = async () => {
+    const url = "http://localhost:4999/v1/credentials";
+
+    const formData = new FormData();
+    formData.append("local_username", sqlUsername);
+    formData.append("local_password", sqlPassword);
+    formData.append("local_url", sqlHost);
+    formData.append("cloud_username", cloudUsername);
+    formData.append("cloud_password", cloudPassword);
+    formData.append("cloud_url", cloudURL);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include", // To include the cookies in the request
+        body: formData,
+      });
+
+      if (response.ok) {
+        // Login successful
+        setIsAuthenticated(true);
+        navigate("/migration");
+      } else {
+        // Login failed
+        if (
+          !sqlHost ||
+          !sqlUsername ||
+          !sqlPassword ||
+          !cloudURL ||
+          !cloudUsername ||
+          !cloudPassword
+        ) {
+          setConnectErrorMessage("Please fill in all required fields.");
+          return;
+        }
+
+        const errorMessage = await response.text();
+        setConnectErrorMessage(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
+  };
+
+  const handleConnect = (event) => {
+    event.preventDefault();
+    login();
   };
 
   const handleCloseModalA = () => {
@@ -77,7 +108,7 @@ const Home = () => {
 
       <h1 className="company-title">CloudBridge</h1>
       <div className="form-container">
-        <form onSubmit={handleSubmit} className="form">
+        <form onSubmit={handleConnect} className="form">
           <div className="form-content">
             <div className="form-section box">
               <h2>Local Database</h2>

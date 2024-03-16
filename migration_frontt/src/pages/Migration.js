@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+
 import { db_ecommerce_data } from "./testdata.js";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
@@ -12,6 +12,33 @@ const Migration = () => {
   const [showProgress, setShowProgress] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
+  const [dbContents, setDbContents] = useState({});
+
+  useEffect(() => {
+    const fetchContents = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:4999/v1/metadata/source",
+          {
+            method: "GET",
+            credentials: "include", // Include credentials in the request
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.text();
+          const jsonData = JSON.parse(data);
+          setDbContents(jsonData);
+        } else {
+          console.error("Failed to fetch contents");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchContents();
+  });
 
   function handleMigrate() {
     // Start migration by calling backend
@@ -67,7 +94,42 @@ const Migration = () => {
             <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
               Local Database
             </h2>
-            <table class="table">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    Table Name
+                  </th>
+                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                    No. of rows
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {dbContents.metadata &&
+                  Object.entries(dbContents.metadata).map(
+                    ([tableName, tableData], index) => (
+                      <tr key={tableName}>
+                        <th scope="row">{index + 1}</th>
+                        <td style={{ whiteSpace: "nowrap" }}>{tableName}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {tableData.rows}
+                        </td>
+                      </tr>
+                    )
+                  )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {/* <div className="form-container">
+        <div className="card" style={{ width: "600px" }}>
+          <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
+            <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
+              Local Database
+            </h2>
+            <table className="table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -92,7 +154,7 @@ const Migration = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
         <div className="button-container">
           <button type="submit" className="button" onClick={handleMigrate}>
             Migrate
