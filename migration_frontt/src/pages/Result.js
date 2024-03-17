@@ -1,31 +1,29 @@
-import React from "react";
-import { migration_result } from "./testdata.js";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import {
   faCircleCheck,
   faCircleXmark,
 } from "@fortawesome/free-regular-svg-icons";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
+import { migration_result } from "./testdata.js";
 
-const Result = () => {
-  const navigate = useNavigate();
+const Result = ({ logout }) => {
   const [showProgress, setShowProgress] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
 
-  function handleToggle() {}
+  const handleToggle = () => {};
 
   const handleRemigrate = () => {
     setLoadingMessage("Migrating");
     setShowProgress(true);
-    //set 5 second timeout
+    //set 2 second timeout
     setTimeout(() => {
       setShowProgress(false);
       setShowValidation(true);
-    }, 5000);
+    }, 2000);
   };
 
   const handleRevalidate = () => {
@@ -48,7 +46,7 @@ const Result = () => {
 
     setTimeout(() => {
       setShowProgress(false);
-    }, 5000);
+    }, 2000);
   };
 
   return (
@@ -69,10 +67,37 @@ const Result = () => {
       <div className="form-container">
         <div className="card" style={{ width: "900px" }}>
           <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
-            <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
-              Migration Result
-            </h2>
-            <table class="table">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              <h2
+                className="card-title"
+                style={{ whiteSpace: "nowrap", margin: "0 auto" }}
+              >
+                Migration Result
+              </h2>
+              <button
+                className="icon-button"
+                onClick={() => logout()}
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  style={{ width: "30px", height: "30px" }}
+                />
+              </button>
+            </div>
+
+            <table className="table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -146,7 +171,7 @@ const Result = () => {
                       }}
                     >
                       <input
-                        class="form-check-input border-3"
+                        className="form-check-input border-3"
                         style={{ width: "20px", height: "20px" }}
                         type="checkbox"
                         value=""
@@ -162,7 +187,7 @@ const Result = () => {
                       }}
                     >
                       <input
-                        class="form-check-input border-3"
+                        className="form-check-input border-3"
                         style={{ width: "20px", height: "20px" }}
                         type="checkbox"
                         value=""

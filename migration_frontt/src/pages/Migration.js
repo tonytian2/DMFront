@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { db_ecommerce_data } from "./testdata.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
-
 import "./CSS/Migration.css";
+// import { db_ecommerce_data } from "./testdata.js";
 
-const Migration = () => {
+const Migration = ({ logout }) => {
   const navigate = useNavigate();
   const [showProgress, setShowProgress] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
@@ -40,17 +40,17 @@ const Migration = () => {
     fetchContents();
   });
 
-  function handleMigrate() {
+  const handleMigrate = () => {
     // Start migration by calling backend
 
     // Redirect to Result.js after migration
     setShowProgress(true);
-    // Set 5 second timeout
+    // Set 2 second timeout
     setTimeout(() => {
       setShowProgress(false);
       setShowValidation(true);
-    }, 5000);
-  }
+    }, 2000);
+  };
 
   const handleCloseModalB = () => {
     setShowProgress(false);
@@ -70,7 +70,7 @@ const Migration = () => {
 
     setTimeout(() => {
       navigate("/result");
-    }, 5000);
+    }, 2000);
   };
 
   return (
@@ -91,9 +91,35 @@ const Migration = () => {
       <div className="form-container">
         <div className="card" style={{ width: "600px" }}>
           <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
-            <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
-              Local Database
-            </h2>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              <h2
+                className="card-title"
+                style={{ whiteSpace: "nowrap", margin: "0 auto" }}
+              >
+                Local Database
+              </h2>
+              <button
+                className="icon-button"
+                onClick={() => logout()}
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  style={{ width: "30px", height: "30px" }}
+                />
+              </button>
+            </div>
             <table className="table">
               <thead>
                 <tr>

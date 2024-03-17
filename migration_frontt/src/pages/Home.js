@@ -16,10 +16,11 @@ const Home = () => {
   const [showModalA, setShowModalA] = useState(false);
   const [showModalB, setShowModalB] = useState(false);
   const [showModalC, setShowModalC] = useState(false);
-  const [progress, setProgress] = useState(50); // Initialize progress state
+  const [progress, setProgress] = useState(50);
   const [errorMessage, setErrorMessage] = useState("This is an error message");
   const [connectErrorMessage, setConnectErrorMessage] = useState("");
 
+  // Function to handle login by sending credentials and authenticating
   const login = async () => {
     const url = "http://localhost:4999/v1/credentials";
 
