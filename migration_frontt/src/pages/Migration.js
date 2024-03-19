@@ -13,6 +13,8 @@ const Migration = ({ logout }) => {
   const [showValidation, setShowValidation] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
   const [dbContents, setDbContents] = useState({});
+  const [migrateErrorMessage, setMigrateErrorMessage] = useState("");
+  const [validateErrorMessage, setValidateErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchContents = async () => {
@@ -40,16 +42,28 @@ const Migration = ({ logout }) => {
     fetchContents();
   });
 
-  const handleMigrate = () => {
-    // Start migration by calling backend
-
-    // Redirect to Result.js after migration
+  const handleMigrate = async () => {
     setShowProgress(true);
-    // Set 2 second timeout
-    setTimeout(() => {
-      setShowProgress(false);
-      setShowValidation(true);
-    }, 2000);
+    try {
+      const response = await fetch("http://localhost:4999/v1/migrate_all", {
+        method: "GET",
+        credentials: "include",
+      });
+  
+      console.log("Response status:", response.status);
+      console.log("Response status text:", response.statusText);
+  
+      if (response.ok) {
+        setShowProgress(false);
+        setShowValidation(true);
+      } else {
+        const errorData = await response.json();
+        setMigrateErrorMessage(errorData.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMigrateErrorMessage("An error occurred during migration.");
+    }
   };
 
   const handleCloseModalB = () => {
@@ -60,18 +74,53 @@ const Migration = ({ logout }) => {
     navigate("/result");
   };
 
-  const handleValidation = (inputPercentage) => {
-    // Validation logic goes here
-    console.log(`Validation started with percentage: ${inputPercentage}`);
-    // Potentially close modal after validation
-    setShowValidation(false);
+  const handleValidation = async (inputPercentage) => {
     setLoadingMessage("Validating");
     setShowProgress(true);
 
-    setTimeout(() => {
-      navigate("/result");
-    }, 2000);
-  };
+    try {
+  const completenessUrl = "http://localhost:4999/v1/validation/completeness";
+  const accuracyUrl = `http://localhost:4999/v1/validation/accuracy/${inputPercentage}`;
+
+  const completenessResponse = await fetch(completenessUrl, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const accuracyResponse = await fetch(accuracyUrl, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (completenessResponse.ok && accuracyResponse.ok) {
+    const completenessData = await completenessResponse.json();
+    const accuracyData = await accuracyResponse.json();
+  
+  
+    const combinedTable = completenessData.map((item) => {
+      const accuracyItem = accuracyData.find((accItem) => accItem.tableName === item.tableName);
+  
+      return {
+        tableName: item.tableName,
+        completeness: item.completeness === 1 ? true : false,
+        accuracy: accuracyItem?.accuracy === 100 ? true : false,
+        percentage: accuracyItem?.accuracy === 100 ? inputPercentage : 0,
+      };
+    });
+  
+    localStorage.setItem("combinedTable", JSON.stringify(combinedTable));
+
+  // Log the results
+  console.log("Combined table:", combinedTable);
+
+  navigate("/result");
+  }
+
+} catch (error) {
+  console.error("Error:", error);
+  setValidateErrorMessage("An error occurred during validation.");
+  }
+};
 
   return (
     <div className="home">
