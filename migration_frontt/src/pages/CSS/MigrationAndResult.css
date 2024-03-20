@@ -3,6 +3,23 @@
 }
 
 .exit-icon {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
+}
+
+.form-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-green {
+  color: green;
+}
+
+.icon-red {
+  color: red;
+}
+
+.text-red {
+  color: red;
 }

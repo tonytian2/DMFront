@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleCheck,
@@ -7,12 +7,20 @@ import {
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
-import { migration_result } from "./testdata.js";
+// import { migration_result } from "./testdata.js";
 
 const Result = ({ logout }) => {
   const [showProgress, setShowProgress] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
+  const [tableData, setTableData] = useState({});
+
+  useEffect(() => {
+    // Access data from localStorage
+    const combinedTable = localStorage.getItem("combinedTable");
+    const combinedTableJSON = JSON.parse(combinedTable);
+    setTableData(combinedTableJSON);
+  }, []);
 
   const handleToggle = () => {};
 
@@ -65,7 +73,7 @@ const Result = ({ logout }) => {
         />
       )}
       <div className="form-container">
-        <div className="card" style={{ width: "900px" }}>
+        <div className="card" style={{ width: "1000px" }}>
           <div className="card-body w-100" style={{ paddingLeft: "30px" }}>
             <div
               style={{
@@ -75,10 +83,7 @@ const Result = ({ logout }) => {
                 marginBottom: "10px",
               }}
             >
-              <h2
-                className="card-title"
-                style={{ whiteSpace: "nowrap", margin: "0 auto" }}
-              >
+              <h2 className="card-title nowrap" style={{ margin: "0 auto" }}>
                 Migration Result
               </h2>
               <button
@@ -92,111 +97,140 @@ const Result = ({ logout }) => {
               >
                 <FontAwesomeIcon
                   icon={faRightFromBracket}
-                  style={{ width: "30px", height: "30px" }}
+                  className="exit-icon"
                 />
               </button>
             </div>
 
-            <table className="table">
+            <table className="table table-hover">
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                  <th scope="col" className="nowrap">
                     Table Name
                   </th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                  <th scope="col" className="nowrap">
                     Completeness
                   </th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                  <th scope="col" className="nowrap">
                     Accuracy
                   </th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                  <th scope="col" className="nowrap">
                     Revalidate?
                   </th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
+                  <th scope="col" className="nowrap">
                     Remigrate?
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                {migration_result.map((data, index) => (
-                  <tr key={index}>
-                    <th scope="row" style={{ whiteSpace: "nowrap" }}>
-                      {index + 1}
-                    </th>
-                    <td style={{ whiteSpace: "nowrap" }}>{data.tableName}</td>
-                    <td
-                      style={{
-                        whiteSpace: "nowrap",
-                        paddingLeft: "20px",
-                        alignItems: "center",
-                      }}
-                    >
-                      {data.completeness ? (
-                        <FontAwesomeIcon
-                          icon={faCircleCheck}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faCircleXmark}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      )}
-                    </td>
-                    <td
-                      style={{
-                        whiteSpace: "nowrap",
-                        paddingLeft: "20px",
-                        alignItems: "center",
-                      }}
-                    >
-                      {data.accuracy ? (
-                        <FontAwesomeIcon
-                          icon={faCircleCheck}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faCircleXmark}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      )}
-                    </td>
-                    <td
-                      style={{
-                        whiteSpace: "nowrap",
-                        paddingLeft: "20px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <input
-                        className="form-check-input border-3"
-                        style={{ width: "20px", height: "20px" }}
-                        type="checkbox"
-                        value=""
-                        id="revalidate-checkbox"
-                        onChange={handleToggle}
-                      />
-                    </td>
-                    <td
-                      style={{
-                        whiteSpace: "nowrap",
-                        paddingLeft: "20px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <input
-                        className="form-check-input border-3"
-                        style={{ width: "20px", height: "20px" }}
-                        type="checkbox"
-                        value=""
-                        id="remigrate-checkbox"
-                        onChange={handleToggle}
-                      />
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="table-group-divider">
+                {tableData &&
+                  Object.entries(tableData).map(
+                    ([tableName, tableData], index) => (
+                      <tr key={index}>
+                        <th scope="row" className="nowrap">
+                          {index + 1}
+                        </th>
+                        <td className="nowrap">{tableName}</td>
+                        <td
+                          className="nowrap"
+                          style={{
+                            paddingLeft: "20px",
+                            alignItems: "center",
+                          }}
+                        >
+                          {tableData.completeness ? (
+                            <FontAwesomeIcon
+                              icon={faCircleCheck}
+                              className="form-icon icon-green"
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faCircleXmark}
+                              className="form-icon icon-red"
+                            />
+                          )}
+                          <span
+                            className={
+                              tableData.completenessPercentage === 100
+                                ? "inherit"
+                                : "text-red"
+                            }
+                            style={{
+                              marginLeft: "5px",
+                              fontSize: "9px",
+                            }}
+                          >
+                            ({tableData.completenessPercentage}%)
+                          </span>
+                        </td>
+                        <td
+                          className="nowrap"
+                          style={{
+                            paddingLeft: "20px",
+                            alignItems: "center",
+                          }}
+                        >
+                          {tableData.accuracy ? (
+                            <FontAwesomeIcon
+                              icon={faCircleCheck}
+                              className="form-icon icon-green"
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faCircleXmark}
+                              className="form-icon icon-red"
+                            />
+                          )}
+                          <span
+                            className={
+                              tableData.accuracyPercentage === 100
+                                ? "inherit"
+                                : "text-red"
+                            }
+                            style={{
+                              marginLeft: "5px",
+                              fontSize: "9px",
+                            }}
+                          >
+                            ({tableData.accuracyPercentage.toFixed(2)}%)
+                          </span>
+                        </td>
+                        <td
+                          className="nowrap"
+                          style={{
+                            paddingLeft: "20px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <input
+                            className="form-check-input border-3"
+                            style={{ width: "20px", height: "20px" }}
+                            type="checkbox"
+                            value=""
+                            id="revalidate-checkbox"
+                            onChange={handleToggle}
+                          />
+                        </td>
+                        <td
+                          className="nowrap"
+                          style={{
+                            paddingLeft: "20px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <input
+                            className="form-check-input border-3"
+                            style={{ width: "20px", height: "20px" }}
+                            type="checkbox"
+                            value=""
+                            id="remigrate-checkbox"
+                            onChange={handleToggle}
+                          />
+                        </td>
+                      </tr>
+                    )
+                  )}
               </tbody>
             </table>
           </div>

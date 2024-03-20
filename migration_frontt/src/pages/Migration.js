@@ -11,8 +11,8 @@ import "./CSS/MigrationAndResult.css";
 
 const Migration = ({ logout }) => {
   const navigate = useNavigate();
-  const [showProgress, setShowProgress] = useState(false);
-  const [showValidation, setShowValidation] = useState(false);
+  const [showProgressModel, setShowProgressModel] = useState(false);
+  const [showValidationModel, setShowValidationModel] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
   const [dbContents, setDbContents] = useState({});
   const [onHoverTableWithColumns, setOnHoverTableWithColumns] = useState("");
@@ -45,10 +45,13 @@ const Migration = ({ logout }) => {
     fetchContents();
   }, []);
 
-  const handleMigrate = async () => {
-    setShowProgress(true);
+  const handleMigrateAll = async () => {
+    setShowProgressModel(true);
+
     try {
-      const response = await fetch("http://localhost:4999/v1/migrate_all", {
+      const migrateAllApi = `http://localhost:4999/v1/migrate_all`;
+
+      const response = await fetch(migrateAllApi, {
         method: "GET",
         credentials: "include",
       });
@@ -57,8 +60,8 @@ const Migration = ({ logout }) => {
       console.log("Response status text:", response.statusText);
 
       if (response.ok) {
-        setShowProgress(false);
-        setShowValidation(true);
+        setShowProgressModel(false);
+        setShowValidationModel(true);
       } else {
         const errorData = await response.json();
         setMigrateErrorMessage(errorData.message);
@@ -69,29 +72,20 @@ const Migration = ({ logout }) => {
     }
   };
 
-  const handleCloseModalB = () => {
-    setShowProgress(false);
-  };
-
-  const handleCloseModalC = () => {
-    navigate("/result");
-  };
-
   const handleValidation = async (inputPercentage) => {
     setLoadingMessage("Validating");
-    setShowProgress(true);
+    setShowProgressModel(true);
 
     try {
-      const completenessUrl =
-        "http://localhost:4999/v1/validation/completeness";
-      const accuracyUrl = `http://localhost:4999/v1/validation/accuracy/${inputPercentage}`;
+      const completenessApi = `http://localhost:4999/v1/validation/completeness`;
+      const accuracyApi = `http://localhost:4999/v1/validation/accuracy/${inputPercentage}`;
 
-      const completenessResponse = await fetch(completenessUrl, {
+      const completenessResponse = await fetch(completenessApi, {
         method: "GET",
         credentials: "include",
       });
 
-      const accuracyResponse = await fetch(accuracyUrl, {
+      const accuracyResponse = await fetch(accuracyApi, {
         method: "GET",
         credentials: "include",
       });
@@ -99,24 +93,18 @@ const Migration = ({ logout }) => {
       if (completenessResponse.ok && accuracyResponse.ok) {
         const completenessData = await completenessResponse.json();
         const accuracyData = await accuracyResponse.json();
+        const combinedTable = {};
 
-        const combinedTable = completenessData.map((item) => {
-          const accuracyItem = accuracyData.find(
-            (accItem) => accItem.tableName === item.tableName
-          );
-
-          return {
-            tableName: item.tableName,
-            completeness: item.completeness === 1 ? true : false,
-            accuracy: accuracyItem?.accuracy === 100 ? true : false,
-            percentage: accuracyItem?.accuracy === 100 ? inputPercentage : 0,
+        Object.entries(completenessData).forEach(([table, data]) => {
+          combinedTable[table] = {
+            completeness: data["completeness"] === 1 ? true : false,
+            completenessPercentage: data["completeness"] * 100,
+            accuracy: accuracyData[table]?.accuracy === 100 ? true : false,
+            accuracyPercentage: accuracyData[table]?.accuracy,
           };
         });
 
         localStorage.setItem("combinedTable", JSON.stringify(combinedTable));
-
-        // Log the results
-        console.log("Combined table:", combinedTable);
 
         navigate("/result");
       }
@@ -124,6 +112,14 @@ const Migration = ({ logout }) => {
       console.error("Error:", error);
       setValidateErrorMessage("An error occurred during validation.");
     }
+  };
+
+  const handleCloseModalB = () => {
+    setShowProgressModel(false);
+  };
+
+  const handleCloseModalC = () => {
+    navigate("/result");
   };
 
   const handleOnHoverTable = (event) => {
@@ -135,20 +131,24 @@ const Migration = ({ logout }) => {
 
   return (
     <div className="home">
-      {showProgress && (
+      {showProgressModel && (
         <ProgressModal
           progress={50}
           closeModal={handleCloseModalB}
           msg={loadingMessage}
         />
       )}
-      {showValidation && (
+      {showValidationModel && (
         <ValidationModal
           closeModal={handleCloseModalC}
           onValidate={handleValidation}
         />
       )}
-      <div style={{ display: "flex" }}>
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
         <div className="form-container">
           <div className="card" style={{ width: "600px" }}>
             <div className="card-body w-100" style={{ padding: "20px 30px" }}>
@@ -208,16 +208,18 @@ const Migration = ({ logout }) => {
             </div>
           </div>
           <div className="button-container">
-            <button type="submit" className="button" onClick={handleMigrate}>
+            <button type="submit" className="button" onClick={handleMigrateAll}>
               Migrate
             </button>
           </div>
         </div>
         {onHoverTableWithColumns && (
-          <TableColumns
-            table={Object.keys(onHoverTableWithColumns)[0]}
-            columns={Object.values(onHoverTableWithColumns)[0]}
-          />
+          <div style={{ marginLeft: "50px" }}>
+            <TableColumns
+              table={Object.keys(onHoverTableWithColumns)[0]}
+              columns={Object.values(onHoverTableWithColumns)[0]}
+            />
+          </div>
         )}
       </div>
     </div>
@@ -225,36 +227,3 @@ const Migration = ({ logout }) => {
 };
 
 export default Migration;
-
-/* <div className="form-container">
-        <div className="card" style={{ width: "600px" }}>
-          <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
-            <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
-              Local Database
-            </h2>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                    Table Name
-                  </th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                    No. of rows
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {db_ecommerce_data.map((data, index) => (
-                  <tr key={index}>
-                    <th scope="row" style={{ whiteSpace: "nowrap" }}>
-                      {index + 1}
-                    </th>
-                    <td style={{ whiteSpace: "nowrap" }}>{data.tableName}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{data.rowTotal}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div> */
