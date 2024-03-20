@@ -16,7 +16,7 @@ function App() {
         credentials: "include",
       });
       if (response.ok) {
-        localStorage.isAuthenticated = false;
+        localStorage.clear();
         navigate("/");
       } else {
       }
