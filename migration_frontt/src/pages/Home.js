@@ -148,7 +148,7 @@ const Home = () => {
               <input
                 id="cloudURL"
                 type="text"
-                placeholder="URL"
+                placeholder="host"
                 value={cloudURL}
                 onChange={(e) => setCloudURL(e.target.value)}
                 className="form-control"
