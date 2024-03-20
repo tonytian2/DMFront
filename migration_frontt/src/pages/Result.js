@@ -66,7 +66,7 @@ const Result = ({ logout }) => {
       )}
       <div className="form-container">
         <div className="card" style={{ width: "900px" }}>
-          <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
+          <div className="card-body w-100" style={{ paddingLeft: "30px" }}>
             <div
               style={{
                 display: "flex",

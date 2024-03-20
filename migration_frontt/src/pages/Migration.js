@@ -4,7 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
+import TableColumns from "../components/TableColumns";
 import "./CSS/Migration.css";
+import "./CSS/MigrationAndResult.css";
 // import { db_ecommerce_data } from "./testdata.js";
 
 const Migration = ({ logout }) => {
@@ -13,6 +15,7 @@ const Migration = ({ logout }) => {
   const [showValidation, setShowValidation] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
   const [dbContents, setDbContents] = useState({});
+  const [onHoverTableWithColumns, setOnHoverTableWithColumns] = useState("");
 
   useEffect(() => {
     const fetchContents = async () => {
@@ -38,7 +41,7 @@ const Migration = ({ logout }) => {
     };
 
     fetchContents();
-  });
+  }, []);
 
   const handleMigrate = () => {
     // Start migration by calling backend
@@ -73,6 +76,13 @@ const Migration = ({ logout }) => {
     }, 2000);
   };
 
+  const handleOnHoverTable = (event) => {
+    const table = event.target.parentNode.querySelector(".nowrap").textContent;
+    const tableWithColumns = { [table]: dbContents.metadata[table].columns };
+
+    setOnHoverTableWithColumns(tableWithColumns);
+  };
+
   return (
     <div className="home">
       {showProgress && (
@@ -88,68 +98,86 @@ const Migration = ({ logout }) => {
           onValidate={handleValidation}
         />
       )}
-      <div className="form-container">
-        <div className="card" style={{ width: "600px" }}>
-          <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "10px",
-              }}
-            >
-              <h2
-                className="card-title"
-                style={{ whiteSpace: "nowrap", margin: "0 auto" }}
-              >
-                Local Database
-              </h2>
-              <button
-                className="icon-button"
-                onClick={() => logout()}
+      <div style={{ display: "flex" }}>
+        <div className="form-container">
+          <div className="card" style={{ width: "600px" }}>
+            <div className="card-body w-100" style={{ padding: "20px 30px" }}>
+              <div
                 style={{
-                  border: "none",
-                  background: "none",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "10px",
                 }}
               >
-                <FontAwesomeIcon
-                  icon={faRightFromBracket}
-                  style={{ width: "30px", height: "30px" }}
-                />
-              </button>
+                <h2 className="card-title nowrap" style={{ margin: "0 auto" }}>
+                  Local Database
+                </h2>
+                <button
+                  className="icon-button"
+                  onClick={() => logout()}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faRightFromBracket}
+                    className="exit-icon"
+                  />
+                </button>
+              </div>
+              <div className="table-responsive-sm">
+                <table className="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col" className="nowrap">
+                        Table Name
+                      </th>
+                      <th scope="col" className="nowrap">
+                        No. of rows
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="table-group-divider">
+                    {dbContents.metadata &&
+                      Object.entries(dbContents.metadata).map(
+                        ([tableName, tableData], index) => (
+                          <tr key={tableName} onMouseEnter={handleOnHoverTable}>
+                            <th scope="row">{index + 1}</th>
+                            <td className="nowrap">{tableName}</td>
+                            <td className="nowrap">{tableData.rows}</td>
+                          </tr>
+                        )
+                      )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                    Table Name
-                  </th>
-                  <th scope="col" style={{ whiteSpace: "nowrap" }}>
-                    No. of rows
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {dbContents.metadata &&
-                  Object.entries(dbContents.metadata).map(
-                    ([tableName, tableData], index) => (
-                      <tr key={tableName}>
-                        <th scope="row">{index + 1}</th>
-                        <td style={{ whiteSpace: "nowrap" }}>{tableName}</td>
-                        <td style={{ whiteSpace: "nowrap" }}>
-                          {tableData.rows}
-                        </td>
-                      </tr>
-                    )
-                  )}
-              </tbody>
-            </table>
+          </div>
+          <div className="button-container">
+            <button type="submit" className="button" onClick={handleMigrate}>
+              Migrate
+            </button>
           </div>
         </div>
-        {/* <div className="form-container">
+        {onHoverTableWithColumns && (
+          <TableColumns
+            table={Object.keys(onHoverTableWithColumns)[0]}
+            columns={Object.values(onHoverTableWithColumns)[0]}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Migration;
+
+{
+  /* <div className="form-container">
         <div className="card" style={{ width: "600px" }}>
           <div className="card-body w-100" style={{ paddingLeft: "50px" }}>
             <h2 className="card-title" style={{ whiteSpace: "nowrap" }}>
@@ -180,15 +208,5 @@ const Migration = ({ logout }) => {
               </tbody>
             </table>
           </div>
-        </div> */}
-        <div className="button-container">
-          <button type="submit" className="button" onClick={handleMigrate}>
-            Migrate
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Migration;
+        </div> */
+}
