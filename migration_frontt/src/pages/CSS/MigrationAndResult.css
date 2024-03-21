@@ -23,3 +23,14 @@
 .text-red {
   color: red;
 }
+
+/* Result.js */
+.result-form-item {
+  padding-left: 8px;
+  align-items: center;
+}
+
+.form-checkbox {
+  width: 20px;
+  height: 20px;
+}

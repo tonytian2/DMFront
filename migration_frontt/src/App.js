@@ -1,9 +1,9 @@
-import "./App.css";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Migration from "./pages/Migration";
 import Result from "./pages/Result";
 import NoPage from "./pages/NoPage";
+import "./App.css";
 
 function App() {
   const navigate = useNavigate();
@@ -32,28 +32,30 @@ function App() {
   };
 
   return (
-    <Routes>
-      <Route path="/">
-        <Route index element={<Home />} />
-        <Route
-          path="/migration"
-          element={
-            <PrivateRoute>
-              <Migration logout={logout} />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/result"
-          element={
-            <PrivateRoute>
-              <Result logout={logout} />
-            </PrivateRoute>
-          }
-        />
-        <Route path="*" element={<NoPage />} />
-      </Route>
-    </Routes>
+    <div className="App">
+      <Routes>
+        <Route path="/">
+          <Route index element={<Home />} />
+          <Route
+            path="/migration"
+            element={
+              <PrivateRoute>
+                <Migration logout={logout} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/result"
+            element={
+              <PrivateRoute>
+                <Result logout={logout} />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<NoPage />} />
+        </Route>
+      </Routes>
+    </div>
   );
 }
 

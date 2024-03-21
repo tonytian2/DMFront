@@ -66,8 +66,8 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // Set localStorage.isAuthenticated to false when navigating back to the home page
-    localStorage.setItem("isAuthenticated", "false");
+    // Clear localStorage when navigating back to the home page
+    localStorage.clear();
   }, []);
 
   const handleConnect = (event) => {

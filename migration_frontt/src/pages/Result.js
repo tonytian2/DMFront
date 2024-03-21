@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleCheck,
@@ -7,69 +8,175 @@ import {
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
+import "./CSS/MigrationAndResult.css";
 // import { migration_result } from "./testdata.js";
 
 const Result = ({ logout }) => {
-  const [showProgress, setShowProgress] = useState(false);
-  const [showValidation, setShowValidation] = useState(false);
+  const navigate = useNavigate();
+  const [showProgressModel, setShowProgressModel] = useState(false);
+  const [showValidationModel, setShowValidationModel] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
   const [tableData, setTableData] = useState({});
+  const [selectedRevalidateTables, setselectedRevalidateTables] = useState([]);
+  const [selectedRemigrateTables, setselectedRemigrateTables] = useState([]);
+  const [migrateErrorMessage, setMigrateErrorMessage] = useState("");
+  const [validateErrorMessage, setValidateErrorMessage] = useState("");
+  const [remigrateOrRevalidate, setRemigrateOrRevalidate] = useState("");
 
   useEffect(() => {
-    // Access data from localStorage
+    // Access combinedTable from localStorage
     const combinedTable = localStorage.getItem("combinedTable");
     const combinedTableJSON = JSON.parse(combinedTable);
     setTableData(combinedTableJSON);
   }, []);
 
-  const handleToggle = () => {};
-
-  const handleRemigrate = () => {
-    setLoadingMessage("Migrating");
-    setShowProgress(true);
-    //set 2 second timeout
-    setTimeout(() => {
-      setShowProgress(false);
-      setShowValidation(true);
-    }, 2000);
+  const handleRevalidateTableSelection = (tableName, isChecked) => {
+    if (isChecked) {
+      setselectedRevalidateTables((prevSelectedTables) => [
+        ...prevSelectedTables,
+        tableName,
+      ]);
+    } else {
+      setselectedRevalidateTables((prevSelectedTables) =>
+        prevSelectedTables.filter((name) => name !== tableName)
+      );
+    }
   };
 
-  const handleRevalidate = () => {
-    setShowValidation(true);
+  const handleRemigrateTableSelection = (tableName, isChecked) => {
+    if (isChecked) {
+      setselectedRemigrateTables((prevSelectedTables) => [
+        ...prevSelectedTables,
+        tableName,
+      ]);
+    } else {
+      setselectedRemigrateTables((prevSelectedTables) =>
+        prevSelectedTables.filter((name) => name !== tableName)
+      );
+    }
+  };
+
+  const handleRemigrate = async () => {
+    setLoadingMessage("Migrating");
+    setShowProgressModel(true);
+
+    try {
+      const remigrateTablesApi = `http://localhost:4999/v1/migrate_tables`;
+      const selectedRemigrateTablesObject = { tables: selectedRemigrateTables };
+      console.log(selectedRemigrateTablesObject);
+
+      const response = await fetch(remigrateTablesApi, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedRemigrateTablesObject),
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response status text:", response.statusText);
+
+      if (response.ok) {
+        setShowProgressModel(false);
+        setShowValidationModel(true);
+      } else {
+        const errorData = await response.json();
+        setMigrateErrorMessage(errorData.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMigrateErrorMessage("An error occurred during migration.");
+    }
+  };
+
+  const handleRevalidate = async (inputPercentage) => {
+    setLoadingMessage("Validating");
+    setShowProgressModel(true);
+
+    try {
+      const completenessApi = `http://localhost:4999/v1/validation/completeness`;
+      const accuracyApi = `http://localhost:4999/v1/validation/accuracy/${inputPercentage}`;
+      const selectedRevalidateTablesObject =
+        remigrateOrRevalidate === "remigrate"
+          ? {
+              tables: selectedRemigrateTables,
+            }
+          : { tables: selectedRevalidateTables };
+
+      console.log(selectedRevalidateTablesObject);
+
+      const completenessResponse = await fetch(completenessApi, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedRevalidateTablesObject),
+      });
+
+      const accuracyResponse = await fetch(accuracyApi, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedRevalidateTablesObject),
+      });
+
+      if (completenessResponse.ok && accuracyResponse.ok) {
+        const completenessData = await completenessResponse.json();
+        const accuracyData = await accuracyResponse.json();
+        const newCombinedTable = {};
+
+        const oldCombinedTable = JSON.parse(
+          localStorage.getItem("combinedTable")
+        );
+
+        Object.entries(completenessData).forEach(([table, data]) => {
+          newCombinedTable[table] = {
+            completeness: data["completeness"] === 1 ? true : false,
+            completenessPercentage: data["completeness"] * 100,
+            accuracy: accuracyData[table]?.accuracy === 100 ? true : false,
+            accuracyPercentage: accuracyData[table]?.accuracy,
+          };
+        });
+
+        Object.entries(newCombinedTable).forEach(([table, data]) => {
+          oldCombinedTable[table] = data;
+        });
+
+        localStorage.setItem("combinedTable", JSON.stringify(oldCombinedTable));
+
+        navigate("/result");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setValidateErrorMessage("An error occurred during validation.");
+    }
   };
 
   const handleCloseModalB = () => {
-    setShowProgress(false);
+    setShowProgressModel(false);
   };
 
   const handleCloseModalC = () => {
-    setShowValidation(false);
-  };
-
-  const handleValidation = (inputPercentage) => {
-    console.log(`Validation started with percentage: ${inputPercentage}`);
-    setShowValidation(false);
-    setLoadingMessage("Validating");
-    setShowProgress(true);
-
-    setTimeout(() => {
-      setShowProgress(false);
-    }, 2000);
+    setShowValidationModel(false);
   };
 
   return (
     <div className="home">
-      {showProgress && (
+      {showProgressModel && (
         <ProgressModal
           progress={50}
           closeModal={handleCloseModalB}
           msg={loadingMessage}
         />
       )}
-      {showValidation && (
+      {showValidationModel && (
         <ValidationModal
           closeModal={handleCloseModalC}
-          onValidate={handleValidation}
+          onValidate={handleRevalidate}
         />
       )}
       <div className="form-container">
@@ -132,101 +239,93 @@ const Result = ({ logout }) => {
                           {index + 1}
                         </th>
                         <td className="nowrap">{tableName}</td>
-                        <td
-                          className="nowrap"
-                          style={{
-                            paddingLeft: "20px",
-                            alignItems: "center",
-                          }}
-                        >
-                          {tableData.completeness ? (
-                            <FontAwesomeIcon
-                              icon={faCircleCheck}
-                              className="form-icon icon-green"
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faCircleXmark}
-                              className="form-icon icon-red"
-                            />
-                          )}
-                          <span
-                            className={
-                              tableData.completenessPercentage === 100
-                                ? "inherit"
-                                : "text-red"
-                            }
-                            style={{
-                              marginLeft: "5px",
-                              fontSize: "9px",
-                            }}
-                          >
-                            ({tableData.completenessPercentage}%)
-                          </span>
+                        <td>
+                          <div className="nowrap result-form-item">
+                            {tableData.completeness ? (
+                              <FontAwesomeIcon
+                                icon={faCircleCheck}
+                                className="form-icon icon-green"
+                              />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faCircleXmark}
+                                className="form-icon icon-red"
+                              />
+                            )}
+                            <span
+                              className={
+                                tableData.completenessPercentage === 100
+                                  ? "inherit"
+                                  : "text-red"
+                              }
+                              style={{
+                                marginLeft: "5px",
+                                fontSize: "9px",
+                              }}
+                            >
+                              ({tableData.completenessPercentage}%)
+                            </span>
+                          </div>
                         </td>
-                        <td
-                          className="nowrap"
-                          style={{
-                            paddingLeft: "20px",
-                            alignItems: "center",
-                          }}
-                        >
-                          {tableData.accuracy ? (
-                            <FontAwesomeIcon
-                              icon={faCircleCheck}
-                              className="form-icon icon-green"
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faCircleXmark}
-                              className="form-icon icon-red"
-                            />
-                          )}
-                          <span
-                            className={
-                              tableData.accuracyPercentage === 100
-                                ? "inherit"
-                                : "text-red"
-                            }
-                            style={{
-                              marginLeft: "5px",
-                              fontSize: "9px",
-                            }}
-                          >
-                            ({tableData.accuracyPercentage.toFixed(2)}%)
-                          </span>
+                        <td>
+                          <div className="nowrap result-form-item">
+                            {tableData.accuracy ? (
+                              <FontAwesomeIcon
+                                icon={faCircleCheck}
+                                className="form-icon icon-green"
+                              />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faCircleXmark}
+                                className="form-icon icon-red"
+                              />
+                            )}
+                            <span
+                              className={
+                                tableData.accuracyPercentage === 100
+                                  ? "inherit"
+                                  : "text-red"
+                              }
+                              style={{
+                                marginLeft: "5px",
+                                fontSize: "9px",
+                              }}
+                            >
+                              ({tableData.accuracyPercentage}%)
+                            </span>
+                          </div>
                         </td>
-                        <td
-                          className="nowrap"
-                          style={{
-                            paddingLeft: "20px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            className="form-check-input border-3"
-                            style={{ width: "20px", height: "20px" }}
-                            type="checkbox"
-                            value=""
-                            id="revalidate-checkbox"
-                            onChange={handleToggle}
-                          />
+                        <td>
+                          <div className="nowrap result-form-item">
+                            <input
+                              className="form-check-input border-3 form-checkbox"
+                              type="checkbox"
+                              value=""
+                              id={`revalidate-checkbox-${index}`}
+                              onChange={(e) =>
+                                handleRevalidateTableSelection(
+                                  tableName,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                          </div>
                         </td>
-                        <td
-                          className="nowrap"
-                          style={{
-                            paddingLeft: "20px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            className="form-check-input border-3"
-                            style={{ width: "20px", height: "20px" }}
-                            type="checkbox"
-                            value=""
-                            id="remigrate-checkbox"
-                            onChange={handleToggle}
-                          />
+                        <td>
+                          <div className="nowrap result-form-item">
+                            <input
+                              className="form-check-input border-3 form-checkbox"
+                              type="checkbox"
+                              value=""
+                              id={`remigrate-checkbox-${index}`}
+                              onChange={(e) =>
+                                handleRemigrateTableSelection(
+                                  tableName,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                          </div>
                         </td>
                       </tr>
                     )
@@ -236,10 +335,24 @@ const Result = ({ logout }) => {
           </div>
         </div>
         <div className="button-container d-flex justify-content-end gap-3">
-          <button type="submit" className="button" onClick={handleRevalidate}>
+          <button
+            type="submit"
+            className="button"
+            onClick={() => {
+              setRemigrateOrRevalidate("revalidate");
+              setShowValidationModel(true);
+            }}
+          >
             Revalidate
           </button>
-          <button type="submit" className="button" onClick={handleRemigrate}>
+          <button
+            type="submit"
+            className="button"
+            onClick={() => {
+              setRemigrateOrRevalidate("remigrate");
+              handleRemigrate();
+            }}
+          >
             Remigrate
           </button>
         </div>

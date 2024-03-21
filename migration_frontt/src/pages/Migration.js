@@ -147,6 +147,7 @@ const Migration = ({ logout }) => {
       <div
         style={{
           display: "flex",
+          position: "relative",
         }}
       >
         <div className="form-container">
@@ -214,7 +215,7 @@ const Migration = ({ logout }) => {
           </div>
         </div>
         {onHoverTableWithColumns && (
-          <div style={{ marginLeft: "50px" }}>
+          <div style={{ position: "absolute", left: "680px" }}>
             <TableColumns
               table={Object.keys(onHoverTableWithColumns)[0]}
               columns={Object.values(onHoverTableWithColumns)[0]}
