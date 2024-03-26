@@ -13,6 +13,7 @@ import "./CSS/MigrationAndResult.css";
 const Migration = ({ logout }) => {
   const navigate = useNavigate();
   const [showProgressModel, setShowProgressModel] = useState(false);
+  const [progressModelProgress, setProgressModelProgress] = useState(0);
   const [showValidationModel, setShowValidationModel] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
   const [dbContents, setDbContents] = useState({});
@@ -55,23 +56,34 @@ const Migration = ({ logout }) => {
     try {
       const migrateAllApi = `http://localhost:4999/v1/migrate_all`;
 
-      const response = await fetch(migrateAllApi, {
-        method: "GET",
-        credentials: "include",
+      const eventSource = new EventSource(migrateAllApi, {
+        withCredentials: true
       });
 
-      console.log("Response status:", response.status);
-      console.log("Response status text:", response.statusText);
 
-      if (response.ok) {
-        setShowProgressModel(false);
-        setShowValidationModel(true);
-      } else {
-        const errorData = await response.text();
-        setShowProgressModel(false)
-        setErrorMessage("Connection Error, plese try again.")
-        setErrorModal(true)
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.finished_data) {
+          setProgressModelProgress(100);
+          eventSource.close();
+          setShowProgressModel(false);
+          setShowValidationModel(true);
+        }
+        if (data.progress) {
+          setProgressModelProgress(data.progress);
+        }
+        else if (data.error) {
+          // must be error
+          const errorData = data.error;
+          setMigrateErrorMessage(errorData);
+          eventSource.close();
+        }
       }
+      eventSource.onerror = (error) => {
+        console.error("Error:", error);
+        setMigrateErrorMessage(error);
+        eventSource.close();
+      };
     } catch (error) {
       console.error("Error:", error);
       setShowProgressModel(false)
@@ -172,7 +184,7 @@ const Migration = ({ logout }) => {
     ) }
       {showProgressModel && (
         <ProgressModal
-          progress={50}
+          progress={progressModelProgress}
           closeModal={handleCloseModalB}
           msg={loadingMessage}
         />
