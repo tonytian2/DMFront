@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import ProgressModal from "./Modal/LoadingModal";
+import ProgressModal from "./Modal/progressModal";
 import ValidationModal from "./Modal/ValidationModal";
 import TableColumns from "../components/TableColumns";
 import ErrorModal from "./Modal/ErrorModal";
