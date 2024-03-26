@@ -9,6 +9,10 @@ import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
 import "./CSS/MigrationAndResult.css";
+import ErrorModal from "./Modal/ErrorModal";
+import TickModal from "./Modal/SuccessModal";
+
+
 // import { migration_result } from "./testdata.js";
 
 const Result = ({ logout }) => {
@@ -19,9 +23,11 @@ const Result = ({ logout }) => {
   const [tableData, setTableData] = useState({});
   const [selectedRevalidateTables, setselectedRevalidateTables] = useState([]);
   const [selectedRemigrateTables, setselectedRemigrateTables] = useState([]);
-  const [migrateErrorMessage, setMigrateErrorMessage] = useState("");
-  const [validateErrorMessage, setValidateErrorMessage] = useState("");
   const [remigrateOrRevalidate, setRemigrateOrRevalidate] = useState("");
+  const [errorMessage, setErrorMessage] = useState("This is an error message");
+  const [showErrorModal, setErrorModal] = useState(false);
+  const [showSuccessModal, setSuccessModal] = useState(false);
+
 
   useEffect(() => {
     // Access combinedTable from localStorage
@@ -56,6 +62,12 @@ const Result = ({ logout }) => {
     }
   };
 
+  const handleCloseSuccess = () => {
+    setSuccessModal(false);
+  };
+  const handleCloseModalA = () => {
+    setErrorModal(false);
+  };
   const handleRemigrate = async () => {
     setLoadingMessage("Migrating");
     setShowProgressModel(true);
@@ -82,15 +94,18 @@ const Result = ({ logout }) => {
         setShowValidationModel(true);
       } else {
         const errorData = await response.json();
-        setMigrateErrorMessage(errorData.message);
+        setErrorMessage(errorData.message)
+        setErrorModal(true)
       }
     } catch (error) {
       console.error("Error:", error);
-      setMigrateErrorMessage("An error occurred during migration.");
+      setErrorMessage("An error occurred during migration.")
+      setErrorModal(true)
     }
   };
 
   const handleRevalidate = async (inputPercentage) => {
+    setShowValidationModel(false)
     setLoadingMessage("Validating");
     setShowProgressModel(true);
 
@@ -152,7 +167,8 @@ const Result = ({ logout }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      setValidateErrorMessage("An error occurred during validation.");
+      setErrorMessage("An error occurred during validation.")
+      setErrorModal(true)
     }
   };
 
@@ -163,9 +179,26 @@ const Result = ({ logout }) => {
   const handleCloseModalC = () => {
     setShowValidationModel(false);
   };
+  const handleUpdate = () => {
+    setLoadingMessage("Updating")
+    setShowProgressModel(true)
+
+    setTimeout(function() {
+      setShowProgressModel(false);
+      setSuccessModal(true);
+    }, 1000);
+    // setSuccessModal(true)
+  };
 
   return (
     <div className="home">
+      {showErrorModal && (
+        <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
+      )}
+
+      {showSuccessModal && (
+        <TickModal closeModal={handleCloseSuccess} />
+      )}
       {showProgressModel && (
         <ProgressModal
           progress={50}
@@ -335,6 +368,15 @@ const Result = ({ logout }) => {
           </div>
         </div>
         <div className="button-container d-flex justify-content-end gap-3">
+          <button
+            type="submit"
+            className="button"
+            onClick={() => {
+              handleUpdate();
+            }}
+          >
+            Final Update
+          </button>
           <button
             type="submit"
             className="button"

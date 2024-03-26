@@ -15,7 +15,7 @@ const ValidationModal = ({ closeModal, onValidate }) => {
   const handleValidateClick = () => {
     if (
       inputValidationPercentage !== "" &&
-      Number(inputValidationPercentage) >= 0 &&
+      Number(inputValidationPercentage) > 0 &&
       Number(inputValidationPercentage) <= 100
     ) {
       onValidate(inputValidationPercentage);

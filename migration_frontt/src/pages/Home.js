@@ -13,10 +13,7 @@ const Home = () => {
   const [cloudURL, setCloudURL] = useState("");
   const [cloudUsername, setCloudUsername] = useState("");
   const [cloudPassword, setCloudPassword] = useState("");
-  const [showModalA, setShowModalA] = useState(false);
-  const [showModalB, setShowModalB] = useState(false);
-  const [showModalC, setShowModalC] = useState(false);
-  const [progress, setProgress] = useState(50);
+  const [showErrorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("This is an error message");
   const [connectErrorMessage, setConnectErrorMessage] = useState("");
 
@@ -57,8 +54,10 @@ const Home = () => {
           return;
         }
 
-        const errorMessage = await response.text();
-        setConnectErrorMessage(errorMessage);
+        const msg = await response.text();
+        setConnectErrorMessage(msg)
+        setErrorMessage(msg)
+        setErrorMessage(errorMessage);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -76,41 +75,21 @@ const Home = () => {
   };
 
   const handleCloseModalA = () => {
-    setShowModalA(false);
+    setErrorModal(false);
   };
-  const handleCloseModalB = () => {
-    setShowModalB(false);
-  };
-  const handleCloseModalC = () => {
-    setShowModalC(false);
-  };
-  const handleValidation = (inputPercentage) => {
-    // Validation logic goes here
-    console.log(`Validation started with percentage: ${inputPercentage}`);
-    // Potentially close modal after validation
-    handleCloseModalC();
-  };
+
+
 
   return (
     <div className="home">
-      {showModalA && (
+      {showErrorModal && (
         <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
       )}
 
-      {showModalB && (
-        <ProgressModal progress={progress} closeModal={handleCloseModalB} />
-      )}
 
-      {showModalC && (
-        <ValidationModal
-          closeModal={handleCloseModalC}
-          onValidate={handleValidation}
-        />
-      )}
 
-      <button onClick={() => setShowModalA(true)}>Error Modal</button>
-      {/* <button onClick={() => setShowModalB(true)}>Open ModalB</button>
-      <button onClick={() => setShowModalC(true)}>Open ModalC</button> */}
+      {/* <button onClick={() => setShowModalA(true)}>Error Modal</button> */}
+
 
       <h1 className="company-title">CloudBridge</h1>
       <div className="form-container">

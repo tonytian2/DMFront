@@ -5,6 +5,7 @@ import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import ProgressModal from "./Modal/LoadingModal";
 import ValidationModal from "./Modal/ValidationModal";
 import TableColumns from "../components/TableColumns";
+import ErrorModal from "./Modal/ErrorModal";
 import "./CSS/Migration.css";
 import "./CSS/MigrationAndResult.css";
 // import { db_ecommerce_data } from "./testdata.js";
@@ -16,8 +17,10 @@ const Migration = ({ logout }) => {
   const [loadingMessage, setLoadingMessage] = useState("Migrating");
   const [dbContents, setDbContents] = useState({});
   const [onHoverTableWithColumns, setOnHoverTableWithColumns] = useState("");
-  const [migrateErrorMessage, setMigrateErrorMessage] = useState("");
-  const [validateErrorMessage, setValidateErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("This is an error message");
+  const [showErrorModal, setErrorModal] = useState(false);
+
+
 
   useEffect(() => {
     const fetchContents = async () => {
@@ -35,7 +38,8 @@ const Migration = ({ logout }) => {
           const jsonData = JSON.parse(data);
           setDbContents(jsonData);
         } else {
-          console.error("Failed to fetch contents");
+          setErrorMessage("Failed to fetch contents")
+          setErrorModal(true)
         }
       } catch (error) {
         console.error("Error:", error);
@@ -63,16 +67,21 @@ const Migration = ({ logout }) => {
         setShowProgressModel(false);
         setShowValidationModel(true);
       } else {
-        const errorData = await response.json();
-        setMigrateErrorMessage(errorData.message);
+        const errorData = await response.text();
+        setShowProgressModel(false)
+        setErrorMessage("Connection Error, plese try again.")
+        setErrorModal(true)
       }
     } catch (error) {
       console.error("Error:", error);
-      setMigrateErrorMessage("An error occurred during migration.");
+      setShowProgressModel(false)
+      setErrorMessage("An error occurred during migration.")
+      setErrorModal(true)
     }
   };
 
   const handleValidation = async (inputPercentage) => {
+    setShowValidationModel(false)
     setLoadingMessage("Validating");
     setShowProgressModel(true);
 
@@ -110,15 +119,41 @@ const Migration = ({ logout }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      setValidateErrorMessage("An error occurred during validation.");
+      setShowProgressModel(false)
+      setErrorMessage("An error occurred during validation.")
+      setErrorModal(true)
     }
   };
 
+  const handleCloseModalA = () => {
+    setErrorModal(false);
+  };
   const handleCloseModalB = () => {
     setShowProgressModel(false);
   };
 
-  const handleCloseModalC = () => {
+  const handleCloseModalC = async() => {
+    //set accuracy =0 
+    const completenessApi = `http://localhost:4999/v1/validation/completeness`;
+    const completenessResponse = await fetch(completenessApi, {
+      method: "GET",
+      credentials: "include",
+    });
+    const completenessData = await completenessResponse.json();
+
+    const combinedTable = {};
+    Object.entries(completenessData).forEach(([table, data]) => {
+      combinedTable[table] = {
+        completeness: data["completeness"] === 1 ? true : false,
+        completenessPercentage: data["completeness"] * 100,
+        accuracy: false,
+        accuracyPercentage: 0,
+      };
+    });
+    localStorage.setItem("combinedTable", JSON.stringify(combinedTable));
+
+
+
     navigate("/result");
   };
 
@@ -130,7 +165,11 @@ const Migration = ({ logout }) => {
   };
 
   return (
+    
     <div className="home">
+      {showErrorModal && (
+      <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
+    ) }
       {showProgressModel && (
         <ProgressModal
           progress={50}

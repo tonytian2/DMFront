@@ -1,0 +1,62 @@
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+    backdrop-filter: blur(15px);
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 30%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Header with a modern red color */
+  .tick-header {
+    background-color: #009bf5; /* Light green header */
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .tick-body {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .tick-footer {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .tick_close-button {
+    background-color: #0793be; /* Modern red color */
+    color: white;
+    padding: 10px 20px;
+    margin: 20px auto;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    outline: none; /* Remove focus outline */
+  }
+  
+  /* Styles for the '!' icon */
+  .tick-icon {
+    width: 30px; /* Or any other size */
+    height: 30px; /* Maintain aspect ratio */
+    vertical-align: middle; /* Align it with text if needed */
+    margin-right: 10px; /* Space between icon and title */
+  }

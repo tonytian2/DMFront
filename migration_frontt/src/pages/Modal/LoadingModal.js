@@ -9,21 +9,25 @@ const LoadingModal = ({ progress, closeModal , msg}) => {
     <div className="modal">
       <div className="modal-content">
         <div className="modal-header">
-        {msg === "Validating" ? (
+          {msg === "Validating" ? (
           <img src={validateicon} alt="Validation Icon" className="modal-icon" />
           ) : (
           <img src={cloudicon} alt="Cloud Icon" className="modal-icon" />
-        )}
+          )}
           <h2>{msg}</h2>
           <button className="close-buttonn" onClick={closeModal}>&times;</button> {/* Close button */}
         </div>
         <div className="modal-body">
-          <div className="progress-bar-background">
-            <div className="progress-bar-foreground" style={{ width: `${progress}%` }}>
-              {/* Progress bar foreground fills as progress state updates */}
-            </div>
+          <div class="spinner-grow text-success" style={{width: "1rem", height: "1rem"}} role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
-          <p className="progress-text">{progress}%</p>
+          <div class="spinner-grow text-warning" style={{width: "1rem", height: "1rem"}} role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div class="spinner-grow text-danger" style={{width: "1rem", height: "1rem"}} role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          
         </div>
       </div>
     </div>
