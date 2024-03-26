@@ -177,15 +177,77 @@ const Result = ({ logout }) => {
   const handleCloseModalC = () => {
     setShowValidationModel(false);
   };
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     setLoadingMessage("Updating");
     setShowProgressModel(true);
 
-    setTimeout(function () {
+    try {
+      const migrateUpdateApi = `http://localhost:4999/v1/migrate_updates`;
+      const validateCompletenessUpdateApi = `http://localhost:4999/v1/secondValidation/completeness`
+      const validateAccuracyUpdateApi = `http://localhost:4999/v1/secondValidation/accuracy`
+      const AllTablesObject = { tables: Object.keys(tableData) };
+      
+      console.log(AllTablesObject)
+
+
+      
+      const mResponse = await fetch(migrateUpdateApi, {
+        method: "POST",
+        credentials: "include",
+      });     
+    
+
+      const VCResponse = await fetch(validateCompletenessUpdateApi, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(AllTablesObject),
+      });
+
+      const VAResponse = await fetch(validateAccuracyUpdateApi, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(AllTablesObject),
+      });
+
+      if (mResponse.ok) {
+        const mm = await mResponse.json();
+        console.log(mm)
+        mm.updated_tables.forEach(item => {
+          const key = Object.keys(item)[0]; // Get the key name from the item
+          const updatedKey = `(Updated) ${key} `; // Generate the updated key name
+        
+          // Check if the updated key exists in the tabledata
+          if (tableData.hasOwnProperty(key)) {
+            // Rename the key in the tabledata and assign the corresponding value
+            tableData[updatedKey] = tableData[key];
+            delete tableData[key]; // Remove the old key
+          }
+        });
+        localStorage.setItem('tableData', JSON.stringify(tableData));
+      }
+      
+      
       setShowProgressModel(false);
       setSuccessModal(true);
-    }, 1000);
-    // setSuccessModal(true)
+      console.log(mResponse.text);
+      console.log(VCResponse.json());
+
+
+      
+    } catch (error) {
+      console.error("Error:", error);
+      setShowProgressModel(false);
+      setErrorMessage("An error occurred during validation.");
+      setErrorModal(true);
+    }
+    console.log(tableData)
+
   };
 
   return (
@@ -273,7 +335,11 @@ const Result = ({ logout }) => {
                             {tableData.completeness ? (
                               <FontAwesomeIcon
                                 icon={faCircleCheck}
-                                className="form-icon icon-green"
+                                className={
+                                  tableName.startsWith("(Updated)")
+                                    ? "form-icon icon-updated"
+                                    : "form-icon icon-green"
+                                }
                               />
                             ) : (
                               <FontAwesomeIcon
@@ -301,7 +367,11 @@ const Result = ({ logout }) => {
                             {tableData.accuracy ? (
                               <FontAwesomeIcon
                                 icon={faCircleCheck}
-                                className="form-icon icon-green"
+                                className={
+                                  tableName.startsWith("(Updated)")
+                                    ? "form-icon icon-updated"
+                                    : "form-icon icon-green"
+                                }
                               />
                             ) : (
                               <FontAwesomeIcon

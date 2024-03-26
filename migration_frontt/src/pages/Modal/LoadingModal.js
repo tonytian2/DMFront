@@ -18,14 +18,14 @@ const LoadingModal = ({ progress, closeModal , msg}) => {
           <button className="close-buttonn" onClick={closeModal}>&times;</button> {/* Close button */}
         </div>
         <div className="modal-body">
-          <div class="spinner-grow text-success" style={{width: "1rem", height: "1rem"}} role="status">
-            <span class="visually-hidden">Loading...</span>
+          <div className="spinner-grow text-success" style={{width: "1rem", height: "1rem"}} role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
-          <div class="spinner-grow text-warning" style={{width: "1rem", height: "1rem"}} role="status">
-            <span class="visually-hidden">Loading...</span>
+          <div className="spinner-grow text-warning" style={{width: "1rem", height: "1rem"}} role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
-          <div class="spinner-grow text-danger" style={{width: "1rem", height: "1rem"}} role="status">
-            <span class="visually-hidden">Loading...</span>
+          <div className="spinner-grow text-danger" style={{width: "1rem", height: "1rem"}} role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
           
         </div>

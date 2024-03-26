@@ -51,8 +51,16 @@ const Migration = ({ logout }) => {
   const handleMigrateAll = async () => {
     setShowProgressModel(true);
 
+
+    
     try {
       const migrateAllApi = `http://localhost:4999/v1/migrate_all`;
+      const historyApi = `http://localhost:4999/v1/create_history`
+
+      const historyResponse = await fetch(historyApi, {
+        method: "GET",
+        credentials: "include",
+      });
 
       const eventSource = new EventSource(migrateAllApi, {
         withCredentials: true,
