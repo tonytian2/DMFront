@@ -21,8 +21,6 @@ const Migration = ({ logout }) => {
   const [errorMessage, setErrorMessage] = useState("This is an error message");
   const [showErrorModal, setErrorModal] = useState(false);
 
-
-
   useEffect(() => {
     const fetchContents = async () => {
       try {
@@ -39,8 +37,8 @@ const Migration = ({ logout }) => {
           const jsonData = JSON.parse(data);
           setDbContents(jsonData);
         } else {
-          setErrorMessage("Failed to fetch contents")
-          setErrorModal(true)
+          setErrorMessage("Failed to fetch contents");
+          setErrorModal(true);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -57,9 +55,8 @@ const Migration = ({ logout }) => {
       const migrateAllApi = `http://localhost:4999/v1/migrate_all`;
 
       const eventSource = new EventSource(migrateAllApi, {
-        withCredentials: true
+        withCredentials: true,
       });
-
 
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -71,35 +68,34 @@ const Migration = ({ logout }) => {
         }
         if (data.progress) {
           setProgressModelProgress(data.progress);
-        }
-        else if (data.error) {
+        } else if (data.error) {
           // must be error
           const errorData = data.error;
-          setMigrateErrorMessage(errorData);
+          setErrorMessage(errorData);
           eventSource.close();
         }
-      }
+      };
       eventSource.onerror = (error) => {
         console.error("Error:", error);
-        setMigrateErrorMessage(error);
+        setErrorMessage(error);
         eventSource.close();
       };
     } catch (error) {
       console.error("Error:", error);
-      setShowProgressModel(false)
-      setErrorMessage("An error occurred during migration.")
-      setErrorModal(true)
+      setShowProgressModel(false);
+      setErrorMessage("An error occurred during migration.");
+      setErrorModal(true);
     }
   };
 
   const handleValidation = async (inputPercentage) => {
-    setShowValidationModel(false)
+    setShowValidationModel(false);
     setLoadingMessage("Validating");
     setShowProgressModel(true);
 
     try {
-      const completenessApi = `http://localhost:4999/v1/validation/completeness`;
-      const accuracyApi = `http://localhost:4999/v1/validation/accuracy/${inputPercentage}`;
+      const completenessApi = `http://localhost:4999/v1/firstValidation/completeness`;
+      const accuracyApi = `http://localhost:4999/v1/firstValidation/accuracy/${inputPercentage}`;
 
       const completenessResponse = await fetch(completenessApi, {
         method: "GET",
@@ -131,9 +127,9 @@ const Migration = ({ logout }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      setShowProgressModel(false)
-      setErrorMessage("An error occurred during validation.")
-      setErrorModal(true)
+      setShowProgressModel(false);
+      setErrorMessage("An error occurred during validation.");
+      setErrorModal(true);
     }
   };
 
@@ -144,9 +140,9 @@ const Migration = ({ logout }) => {
     setShowProgressModel(false);
   };
 
-  const handleCloseModalC = async() => {
-    //set accuracy =0 
-    const completenessApi = `http://localhost:4999/v1/validation/completeness`;
+  const handleCloseModalC = async () => {
+    //set accuracy =0
+    const completenessApi = `http://localhost:4999/v1/firstValidation/completeness`;
     const completenessResponse = await fetch(completenessApi, {
       method: "GET",
       credentials: "include",
@@ -164,8 +160,6 @@ const Migration = ({ logout }) => {
     });
     localStorage.setItem("combinedTable", JSON.stringify(combinedTable));
 
-
-
     navigate("/result");
   };
 
@@ -177,11 +171,10 @@ const Migration = ({ logout }) => {
   };
 
   return (
-    
     <div className="home">
       {showErrorModal && (
-      <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
-    ) }
+        <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
+      )}
       {showProgressModel && (
         <ProgressModal
           progress={progressModelProgress}

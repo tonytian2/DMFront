@@ -12,7 +12,6 @@ import "./CSS/MigrationAndResult.css";
 import ErrorModal from "./Modal/ErrorModal";
 import TickModal from "./Modal/SuccessModal";
 
-
 // import { migration_result } from "./testdata.js";
 
 const Result = ({ logout }) => {
@@ -27,7 +26,6 @@ const Result = ({ logout }) => {
   const [errorMessage, setErrorMessage] = useState("This is an error message");
   const [showErrorModal, setErrorModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
-
 
   useEffect(() => {
     // Access combinedTable from localStorage
@@ -94,24 +92,24 @@ const Result = ({ logout }) => {
         setShowValidationModel(true);
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.message)
-        setErrorModal(true)
+        setErrorMessage(errorData.message);
+        setErrorModal(true);
       }
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("An error occurred during migration.")
-      setErrorModal(true)
+      setErrorMessage("An error occurred during migration.");
+      setErrorModal(true);
     }
   };
 
   const handleRevalidate = async (inputPercentage) => {
-    setShowValidationModel(false)
+    setShowValidationModel(false);
     setLoadingMessage("Validating");
     setShowProgressModel(true);
 
     try {
-      const completenessApi = `http://localhost:4999/v1/validation/completeness`;
-      const accuracyApi = `http://localhost:4999/v1/validation/accuracy/${inputPercentage}`;
+      const completenessApi = `http://localhost:4999/v1/firstValidation/completeness`;
+      const accuracyApi = `http://localhost:4999/v1/firstValidation/accuracy/${inputPercentage}`;
       const selectedRevalidateTablesObject =
         remigrateOrRevalidate === "remigrate"
           ? {
@@ -167,8 +165,8 @@ const Result = ({ logout }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("An error occurred during validation.")
-      setErrorModal(true)
+      setErrorMessage("An error occurred during validation.");
+      setErrorModal(true);
     }
   };
 
@@ -180,10 +178,10 @@ const Result = ({ logout }) => {
     setShowValidationModel(false);
   };
   const handleUpdate = () => {
-    setLoadingMessage("Updating")
-    setShowProgressModel(true)
+    setLoadingMessage("Updating");
+    setShowProgressModel(true);
 
-    setTimeout(function() {
+    setTimeout(function () {
       setShowProgressModel(false);
       setSuccessModal(true);
     }, 1000);
@@ -196,9 +194,7 @@ const Result = ({ logout }) => {
         <ErrorModal message={errorMessage} closeModal={handleCloseModalA} />
       )}
 
-      {showSuccessModal && (
-        <TickModal closeModal={handleCloseSuccess} />
-      )}
+      {showSuccessModal && <TickModal closeModal={handleCloseSuccess} />}
       {showProgressModel && (
         <ProgressModal
           progress={50}
